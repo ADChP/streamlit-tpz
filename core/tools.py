@@ -42,13 +42,13 @@ def resumen(rol_id, user_name):
     else:
         if rol_id == 1:
             con = sqlite3.connect('datos/db')
-            query_1 = pd.read_sql(f'select cc.paquete Paquete, m.municipio Municipio, cc.vereda Vereda, cc.enlace Enlace from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = "{user_name}" and cc.cc_estado = 2', con)
+            query_1 = pd.read_sql(f'select cc.paquete Paquete, m.municipio Municipio, cc.vereda Vereda, cc.enlace Enlace, cc.observacion Observación from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = "{user_name}" and cc.cc_estado = 2', con)
             st.info('Asignaciones de control de calidad en transcurso:')
             st.table(query_1)
             con.close()
         else:
             con = sqlite3.connect('datos/db')
-            query_1 = pd.read_sql(f'select mlc.paquete Paquete, m.municipio Municipio, mlc.vereda Vereda, mlc.enlace_a Enlace from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc_municipio = m.id where u.usuario = "{user_name}" and mlc.mlc_estado = 2', con)
+            query_1 = pd.read_sql(f'select mlc.paquete Paquete, m.municipio Municipio, mlc.vereda Vereda, mlc.enlace_a Enlace, mlc.observacion Observación from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc_municipio = m.id where u.usuario = "{user_name}" and mlc.mlc_estado = 2', con)
             st.info('Asignaciones de modelo de levantamiento catastral en transcurso:')
             st.table(query_1)
             con.close()

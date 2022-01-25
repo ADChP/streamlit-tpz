@@ -12,7 +12,7 @@ st.set_page_config(
 user = st.sidebar.text_input('Usuario')
 pwd = st.sidebar.text_input('Contraseña', type = 'password')
 
-if st.sidebar.checkbox('Inciar sesión'):
+if st.sidebar.checkbox('Iniciar sesión'):
     if user == '' or pwd == '':
         st.error('Por favor, ingrese bien sus credenciales.')
     else:
