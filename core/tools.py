@@ -66,23 +66,26 @@ def asignar_cc(user_name):
     if user_state == 1 or (user_state == 2 and total_pack < 2):
 
         con = sqlite3.connect('datos/db')
-        query_2 = pd.read_sql(f'select cc.id, cc.paquete Paquete, m.municipio Municipio, cc.vereda Vereda, cc.area Área, cc.cant_predios Predios, cc.enlace from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1', con)
+        query_2 = pd.read_sql(f'select cc.id, cc.paquete Paquete, m.municipio Municipio, cc.vereda Vereda, cc.area Área, cc.cant_predios Predios, cc.enlace, cc.observacion Observación from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1', con)
         con.close()
 
         if query_2.empty:
             st.info('No hay más datos para trabajar. En espera de nuevas entregas.')
         else:
-            query_2_1 = query_2[['Paquete', 'Municipio', 'Vereda', 'Área', 'Predios']].loc[:0]
+            query_2_1 = query_2[['Paquete', 'Municipio', 'Vereda', 'Área', 'Predios', 'Observación']].loc[:0]
             st.subheader('¿Desea asignarse el siguiente paquete?')
             st.table(query_2_1)
             btn_asign = st.button('Asignar')
 
             if btn_asign:
+                #Asigna el más actualizado.
+                con = sqlite3.connect('datos/db')
+                query_2 = pd.read_sql(f'select cc.id, cc.paquete Paquete, m.municipio Municipio, cc.vereda Vereda, cc.area Área, cc.cant_predios Predios, cc.enlace, cc.observacion Observación from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1', con)
+
                 query_2_2 = query_2[['id', 'enlace']].loc[:0]
                 query_2_2_id = query_2_2.loc[0,'id']
                 query_2_2_link = query_2_2.loc[0,'enlace']
                 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                con = sqlite3.connect('datos/db')
                 cur = con.cursor()
                 cur.execute(f'UPDATE control_calidad SET cc_estado = 2, cc_usuario = {user_id}, inicio = "{now}" WHERE id = {query_2_2_id}')
                 cur.execute(f'UPDATE usuarios SET usuario_estado = 2, total_asig = total_asig+1 WHERE id = {user_id}')
@@ -262,23 +265,26 @@ def asignar_gpkg(user_name):
 
     if user_state == 1 or (user_state == 2 and total_pack < 2):
         con = sqlite3.connect('datos/db')
-        query_4 = pd.read_sql(f'select mlc.id, mlc.paquete Paquete, m.municipio Municipio, mlc.vereda Vereda, mlc.area Área, mlc.cant_predios Predios, mlc.enlace_a from mlc join d_municipio m on mlc.mlc_municipio = m.id where mlc.mlc_estado = 1', con)
+        query_4 = pd.read_sql(f'select mlc.id, mlc.paquete Paquete, m.municipio Municipio, mlc.vereda Vereda, mlc.area Área, mlc.cant_predios Predios, mlc.enlace_a, mlc.observacion Observación from mlc join d_municipio m on mlc.mlc_municipio = m.id where mlc.mlc_estado = 1', con)
         con.close()
 
         if query_4.empty:
             st.info('No hay más datos para trabajar. En espera de nuevas entregas.')
         else:
-            query_4_1 = query_4[['Paquete', 'Municipio', 'Vereda', 'Área', 'Predios']].loc[:0]
+            query_4_1 = query_4[['Paquete', 'Municipio', 'Vereda', 'Área', 'Predios', 'Observación']].loc[:0]
             st.subheader('¿Desea asignarse el siguiente paquete?')
             st.table(query_4_1)
             btn_asign = st.button('Asignar')
 
             if btn_asign:
+                #Asigna el más actualizado.
+                con = sqlite3.connect('datos/db')
+                query_4 = pd.read_sql(f'select mlc.id, mlc.paquete Paquete, m.municipio Municipio, mlc.vereda Vereda, mlc.area Área, mlc.cant_predios Predios, mlc.enlace_a, mlc.observacion Observación from mlc join d_municipio m on mlc.mlc_municipio = m.id where mlc.mlc_estado = 1', con)
+
                 query_4_2 = query_4[['id', 'enlace_a']].loc[:0]
                 query_4_2_id = query_4_2.loc[0,'id']
                 query_4_2_link = query_4_2.loc[0,'enlace_a']
                 now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                con = sqlite3.connect('datos/db')
                 cur = con.cursor()
                 cur.execute(f'UPDATE mlc SET mlc_estado = 2, mlc_usuario = {user_id}, inicio = "{now}" WHERE id = {query_4_2_id}')
                 cur.execute(f'UPDATE usuarios SET usuario_estado = 2, total_asig = total_asig+1 WHERE id = {user_id}')
