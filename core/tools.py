@@ -63,7 +63,7 @@ def asignar_cc(user_name):
     total_pack = asigs(user_name)
     total_pack = total_pack.loc[0,'total_asig']
 
-    if user_state == 1 or (user_state == 2 and total_pack < 4):
+    if user_state == 1 or (user_state == 2 and total_pack < 2):
 
         con = sqlite3.connect('datos/db')
         query_2 = pd.read_sql(f'select cc.id, cc.paquete Paquete, m.municipio Municipio, cc.vereda Vereda, cc.area Área, cc.cant_predios Predios, cc.enlace, cc.observacion Observación from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1', con)
