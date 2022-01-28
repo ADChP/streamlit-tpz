@@ -63,7 +63,7 @@ def asignar_cc(user_name):
     total_pack = asigs(user_name)
     total_pack = total_pack.loc[0,'total_asig']
 
-    if user_state == 1 or (user_state == 2 and total_pack < 2):
+    if user_state == 1 or (user_state == 2 and total_pack < 4):
 
         con = sqlite3.connect('datos/db')
         query_2 = pd.read_sql(f'select cc.id, cc.paquete Paquete, m.municipio Municipio, cc.vereda Vereda, cc.area Área, cc.cant_predios Predios, cc.enlace, cc.observacion Observación from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1', con)
@@ -157,6 +157,96 @@ def finalizar_cc(user_name):
                     query_3_2_id = query_3_2.loc[1,'id']
                     query_3_2_mun = query_3_2.loc[1,'cc_municipio']
 
+            elif total_pack == 3:
+                check_asigs = st.radio('Elija la asignación a finalizar.', ('Asignación # 1', 'Asignación # 2', 'Asignación # 3'))
+
+                if check_asigs == 'Asignación # 1':
+                    query_3_1 = query_3[['Paquete', 'Municipio', 'Vereda', 'Área_Ha', 'Predios', 'Usuario']].loc[:0]
+                    query_3_2 = query_3[['id', 'cc_municipio']].loc[:0]
+
+                    query_3_1_paq = query_3_1.loc[0,'Paquete']
+                    query_3_1_ver = query_3_1.loc[0,'Vereda']
+                    query_3_1_pre = query_3_1.loc[0,'Predios']
+                    query_3_1_area = query_3_1.loc[0,'Área_Ha']
+
+                    query_3_2_id = query_3_2.loc[0,'id']
+                    query_3_2_mun = query_3_2.loc[0,'cc_municipio']
+
+                elif check_asigs == 'Asignación # 2':
+                    query_3_1 = query_3[['Paquete', 'Municipio', 'Vereda', 'Área_Ha', 'Predios', 'Usuario']].loc[1:1]
+                    query_3_2 = query_3[['id', 'cc_municipio']].loc[1:1]
+
+                    query_3_1_paq = query_3_1.loc[1,'Paquete']
+                    query_3_1_ver = query_3_1.loc[1,'Vereda']
+                    query_3_1_pre = query_3_1.loc[1,'Predios']
+                    query_3_1_area = query_3_1.loc[1,'Área_Ha']
+
+                    query_3_2_id = query_3_2.loc[1,'id']
+                    query_3_2_mun = query_3_2.loc[1,'cc_municipio']
+
+                else:
+                    query_3_1 = query_3[['Paquete', 'Municipio', 'Vereda', 'Área_Ha', 'Predios', 'Usuario']].loc[2:2]
+                    query_3_2 = query_3[['id', 'cc_municipio']].loc[2:2]
+
+                    query_3_1_paq = query_3_1.loc[2,'Paquete']
+                    query_3_1_ver = query_3_1.loc[2,'Vereda']
+                    query_3_1_pre = query_3_1.loc[2,'Predios']
+                    query_3_1_area = query_3_1.loc[2,'Área_Ha']
+
+                    query_3_2_id = query_3_2.loc[2,'id']
+                    query_3_2_mun = query_3_2.loc[2,'cc_municipio']
+
+            elif total_pack == 4:
+                check_asigs = st.radio('Elija la asignación a finalizar.', ('Asignación # 1', 'Asignación # 2', 'Asignación # 3', 'Asignación # 4'))
+
+                if check_asigs == 'Asignación # 1':
+                    query_3_1 = query_3[['Paquete', 'Municipio', 'Vereda', 'Área_Ha', 'Predios', 'Usuario']].loc[:0]
+                    query_3_2 = query_3[['id', 'cc_municipio']].loc[:0]
+
+                    query_3_1_paq = query_3_1.loc[0,'Paquete']
+                    query_3_1_ver = query_3_1.loc[0,'Vereda']
+                    query_3_1_pre = query_3_1.loc[0,'Predios']
+                    query_3_1_area = query_3_1.loc[0,'Área_Ha']
+
+                    query_3_2_id = query_3_2.loc[0,'id']
+                    query_3_2_mun = query_3_2.loc[0,'cc_municipio']
+
+                elif check_asigs == 'Asignación # 2':
+                    query_3_1 = query_3[['Paquete', 'Municipio', 'Vereda', 'Área_Ha', 'Predios', 'Usuario']].loc[1:1]
+                    query_3_2 = query_3[['id', 'cc_municipio']].loc[1:1]
+
+                    query_3_1_paq = query_3_1.loc[1,'Paquete']
+                    query_3_1_ver = query_3_1.loc[1,'Vereda']
+                    query_3_1_pre = query_3_1.loc[1,'Predios']
+                    query_3_1_area = query_3_1.loc[1,'Área_Ha']
+
+                    query_3_2_id = query_3_2.loc[1,'id']
+                    query_3_2_mun = query_3_2.loc[1,'cc_municipio']
+
+                elif check_asigs == 'Asignación # 3':
+                    query_3_1 = query_3[['Paquete', 'Municipio', 'Vereda', 'Área_Ha', 'Predios', 'Usuario']].loc[2:2]
+                    query_3_2 = query_3[['id', 'cc_municipio']].loc[2:2]
+
+                    query_3_1_paq = query_3_1.loc[2,'Paquete']
+                    query_3_1_ver = query_3_1.loc[2,'Vereda']
+                    query_3_1_pre = query_3_1.loc[2,'Predios']
+                    query_3_1_area = query_3_1.loc[2,'Área_Ha']
+
+                    query_3_2_id = query_3_2.loc[2,'id']
+                    query_3_2_mun = query_3_2.loc[2,'cc_municipio']
+
+                else:
+                    query_3_1 = query_3[['Paquete', 'Municipio', 'Vereda', 'Área_Ha', 'Predios', 'Usuario']].loc[3:3]
+                    query_3_2 = query_3[['id', 'cc_municipio']].loc[3:3]
+
+                    query_3_1_paq = query_3_1.loc[3,'Paquete']
+                    query_3_1_ver = query_3_1.loc[3,'Vereda']
+                    query_3_1_pre = query_3_1.loc[3,'Predios']
+                    query_3_1_area = query_3_1.loc[3,'Área_Ha']
+
+                    query_3_2_id = query_3_2.loc[3,'id']
+                    query_3_2_mun = query_3_2.loc[3,'cc_municipio']
+
             else:
                 query_3_1 = query_3[['Paquete', 'Municipio', 'Vereda', 'Área_Ha', 'Predios', 'Usuario']]#.loc[:0]
                 query_3_2 = query_3[['id', 'cc_municipio']]#.loc[:0]
@@ -184,7 +274,7 @@ def finalizar_cc(user_name):
                         cur = con.cursor()
                         cur.execute(f'UPDATE control_calidad SET cc_estado = 3, final = "{now}" WHERE id = {query_3_2_id}')
 
-                        if total_pack == 2:
+                        if total_pack != 1:
                             cur.execute(f'UPDATE usuarios SET total_asig = total_asig-1 WHERE id = {user_id}')
                             total_pack = asigs(user_name)
                             total_pack = total_pack.loc[0,'total_asig']
@@ -200,7 +290,7 @@ def finalizar_cc(user_name):
                         cur = con.cursor()
                         cur.execute(f'UPDATE control_calidad SET cc_estado = 3, final = "{now}" WHERE id = {query_3_2_id}')
 
-                        if total_pack == 2:
+                        if total_pack != 1:
                             cur.execute(f'UPDATE usuarios SET total_asig = total_asig-1 WHERE id = {user_id}')
                             total_pack = asigs(user_name)
                             total_pack = total_pack.loc[0,'total_asig']
@@ -216,7 +306,7 @@ def finalizar_cc(user_name):
                         cur = con.cursor()
                         cur.execute(f'UPDATE control_calidad SET cc_estado = 3, final = "{now}" WHERE id = {query_3_2_id}')
 
-                        if total_pack == 2:
+                        if total_pack != 1:
                             cur.execute(f'UPDATE usuarios SET total_asig = total_asig-1 WHERE id = {user_id}')
                             total_pack = asigs(user_name)
                             total_pack = total_pack.loc[0,'total_asig']
@@ -232,7 +322,7 @@ def finalizar_cc(user_name):
                         cur = con.cursor()
                         cur.execute(f'UPDATE control_calidad SET cc_estado = 3, final = "{now}" WHERE id = {query_3_2_id}')
 
-                        if total_pack == 2:
+                        if total_pack != 1:
                             cur.execute(f'UPDATE usuarios SET total_asig = total_asig-1 WHERE id = {user_id}')
                             total_pack = asigs(user_name)
                             total_pack = total_pack.loc[0,'total_asig']
