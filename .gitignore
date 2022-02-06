@@ -5,6 +5,4 @@ test.py
 test_2.py
 core/__pycache__
 user
-datos/cc.csv
-datos/mlc.csv
-datos/usuarios.csv
+datos/
