@@ -631,7 +631,7 @@ def cargar_info():
         if file_1 is not None:
             engine = sqlalchemy.create_engine(st.secrets.con_uri)
             con_b = engine.connect()
-            df.to_sql('mlc', con_b, if_exists='append', index=False)
+            df.to_sql('control_calidad', con_b, if_exists='append', index=False)
             con_b.close()
             st.success('Información cargada correctamente.')
         else:
