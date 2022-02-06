@@ -661,7 +661,7 @@ def base_datos():
                 try:
                     con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
                     cur = con.cursor()
-                    cur.execute(f'{txt_5}')
+                    cur.execute(f"{txt_5}")
                     con.commit()
                     con.close()
                     st.success('Tarea ejecutada.')
