@@ -2,5 +2,9 @@ venv/
 app_colombia.zip
 sql_tables
 test.py
+test_2.py
 core/__pycache__
-users
+user
+datos/cc.csv
+datos/mlc.csv
+datos/usuarios.csv

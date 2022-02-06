@@ -31,8 +31,6 @@ if st.sidebar.checkbox('Iniciar sesión'):
 else:
     '''
     # Telespazio - Área SIG
-
     ### Catastro multipropósito (LADM-COL).
-
     Para soporte del aplicativo, contacte a **andres.chavarria@tpzcr.com**
     '''
