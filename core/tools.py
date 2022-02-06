@@ -4,37 +4,27 @@ import psycopg2
 import sqlalchemy
 from datetime import datetime
 
-con_uri = 'postgresql+psycopg2://fohekbeigtrdoz:56b33266545634f472272236bb029b5b2333f860da6d53adcc442ff1168a9192@ec2-44-199-52-133.compute-1.amazonaws.com:5432/d98v6koar5u6o8'
-con_dbname = 'd98v6koar5u6o8'
-con_user = 'fohekbeigtrdoz'
-con_pass = '56b33266545634f472272236bb029b5b2333f860da6d53adcc442ff1168a9192'
-con_host = 'ec2-44-199-52-133.compute-1.amazonaws.com'
-'''con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
-cur = con.cursor()'''
-
-engine = sqlalchemy.create_engine(con_uri)
-
 @st.cache
 def password_db(user_name):
-    pass_db = pd.read_sql(f"select contrasena from usuarios where usuario = '{user_name}'", con_uri)
+    pass_db = pd.read_sql(f"select contrasena from usuarios where usuario = '{user_name}'", st.secrets.con_uri)
     return pass_db
 
 @st.cache
 def role(user_name):
-    rol = pd.read_sql(f"select usuario_rol from usuarios where usuario = '{user_name}'", con_uri)
+    rol = pd.read_sql(f"select usuario_rol from usuarios where usuario = '{user_name}'", st.secrets.con_uri)
     return rol
 
 def u_state(user_name):
-    user_state = pd.read_sql(f"select usuario_estado from usuarios where usuario = '{user_name}'", con_uri)
+    user_state = pd.read_sql(f"select usuario_estado from usuarios where usuario = '{user_name}'", st.secrets.con_uri)
     return user_state
 
 @st.cache
 def u_id(user_name):
-    user_id = pd.read_sql(f"select id from usuarios where usuario = '{user_name}'", con_uri)
+    user_id = pd.read_sql(f"select id from usuarios where usuario = '{user_name}'", st.secrets.con_uri)
     return user_id
 
 def asigs(user_name):
-    total_asig = pd.read_sql(f"select total_asig from usuarios where usuario = '{user_name}'", con_uri)
+    total_asig = pd.read_sql(f"select total_asig from usuarios where usuario = '{user_name}'", st.secrets.con_uri)
     return total_asig
 
 def resumen(rol_id, user_name):
@@ -46,7 +36,7 @@ def resumen(rol_id, user_name):
         st.info('Actualmente no tienes paquete asignado.')
     else:
         if rol_id == 1:
-            con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
+            con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
             cur = con.cursor()
             cur.execute(f"select cc.paquete paquete, m.municipio Municipio, cc.vereda vereda, cc.enlace Enlace, cc.observacion Observación from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = '{user_name}' and cc.cc_estado = 2")
             data = cur.fetchall()
@@ -55,11 +45,11 @@ def resumen(rol_id, user_name):
                 cols.append(elt[0])
             query_1 = pd.DataFrame(data=data,columns=cols)
             con.close()
-            #query_1 = pd.read_sql(f"select cc.paquete paquete, m.municipio Municipio, cc.vereda vereda, cc.enlace Enlace, cc.observacion Observación from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = '{user_name}' and cc.cc_estado = 2", con_uri)
+            #query_1 = pd.read_sql(f"select cc.paquete paquete, m.municipio Municipio, cc.vereda vereda, cc.enlace Enlace, cc.observacion Observación from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = '{user_name}' and cc.cc_estado = 2", st.secrets.con_uri)
             st.info('Asignaciones de control de calidad en transcurso:')
             st.table(query_1)
         else:
-            con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
+            con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
             cur = con.cursor()
             cur.execute(f"select mlc.paquete paquete, m.municipio Municipio, mlc.vereda vereda, mlc.enlace_a Enlace, mlc.observacion Observación from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc_municipio = m.id where u.usuario = '{user_name}' and mlc.mlc_estado = 2")
             data = cur.fetchall()
@@ -68,7 +58,7 @@ def resumen(rol_id, user_name):
                 cols.append(elt[0])
             query_1 = pd.DataFrame(data=data,columns=cols)
             con.close()
-            #query_1 = pd.read_sql(f"select mlc.paquete paquete, m.municipio Municipio, mlc.vereda vereda, mlc.enlace_a Enlace, mlc.observacion Observación from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc_municipio = m.id where u.usuario = '{user_name}' and mlc.mlc_estado = 2", con_uri)
+            #query_1 = pd.read_sql(f"select mlc.paquete paquete, m.municipio Municipio, mlc.vereda vereda, mlc.enlace_a Enlace, mlc.observacion Observación from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc_municipio = m.id where u.usuario = '{user_name}' and mlc.mlc_estado = 2", st.secrets.con_uri)
             st.info('Asignaciones de modelo de levantamiento catastral en transcurso:')
             st.table(query_1)
 
@@ -86,7 +76,7 @@ def asignar_cc(user_name):
 
     if st.session_state.user_state  == 1 or (st.session_state.user_state == 2 and st.session_state.total_pack < 4):
 
-        con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
+        con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
         cur = con.cursor()
         cur.execute("select cc.id, cc.paquete, m.municipio, cc.vereda, cc.area, cc.cant_predios predios, cc.enlace, cc.observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1")
         data = cur.fetchall()
@@ -94,7 +84,7 @@ def asignar_cc(user_name):
         for elt in cur.description:
             cols.append(elt[0])
         query_2 = pd.DataFrame(data=data,columns=cols)
-        #query_2 = pd.read_sql('select cc.id, cc.paquete, m.municipio, cc.vereda, cc.area, cc.cant_predios predios, cc.enlace, cc.observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1', con_uri)
+        #query_2 = pd.read_sql('select cc.id, cc.paquete, m.municipio, cc.vereda, cc.area, cc.cant_predios predios, cc.enlace, cc.observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1', st.secrets.con_uri)
 
         if query_2.empty:
             st.info('No hay más datos para trabajar. En espera de nuevas entregas.')
@@ -105,7 +95,7 @@ def asignar_cc(user_name):
             btn_asign = st.button('Asignar')
 
             if btn_asign:
-                con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
+                con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
                 cur = con.cursor()
                 cur.execute("select cc.id, cc.enlace from control_calidad cc where cc.cc_estado = 1")
                 data = cur.fetchall()
@@ -113,7 +103,7 @@ def asignar_cc(user_name):
                 for elt in cur.description:
                     cols.append(elt[0])
                 query_2_b = pd.DataFrame(data=data,columns=cols)
-                #query_2_b = pd.read_sql('select cc.id, cc.enlace from control_calidad cc where cc.cc_estado = 1', con_uri)
+                #query_2_b = pd.read_sql('select cc.id, cc.enlace from control_calidad cc where cc.cc_estado = 1', st.secrets.con_uri)
 
                 query_2_2 = query_2_b[['id', 'enlace']].loc[:0]
                 query_2_2_id = query_2_2.loc[0,'id']
@@ -149,7 +139,7 @@ def finalizar_cc(user_name):
     if st.session_state.user_state == 1:
         st.info('Actualmente no tienes paquetes asignados.')
     else:
-        con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
+        con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
         cur = con.cursor()
         cur.execute(f"select cc.id, cc.paquete, cc.cc_municipio, m.municipio, cc.vereda, cc.area area_ha, cc.cant_predios predios, u.usuario from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = '{user_name}' and cc.cc_estado = 2")
         data = cur.fetchall()
@@ -157,7 +147,7 @@ def finalizar_cc(user_name):
         for elt in cur.description:
             cols.append(elt[0])
         query_3 = pd.DataFrame(data=data,columns=cols)
-        #query_3 = pd.read_sql(f"select cc.id, cc.paquete, cc.cc_municipio, m.municipio, cc.vereda, cc.area area_ha, cc.cant_predios predios, u.usuario from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = '{user_name}' and cc.cc_estado = 2", con_uri)
+        #query_3 = pd.read_sql(f"select cc.id, cc.paquete, cc.cc_municipio, m.municipio, cc.vereda, cc.area area_ha, cc.cant_predios predios, u.usuario from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = '{user_name}' and cc.cc_estado = 2", st.secrets.con_uri)
 
         col1, col2 = st.columns(2)
 
@@ -406,7 +396,7 @@ def asignar_gpkg(user_name):
     user_id = user_id.loc[0,'id']
 
     if st.session_state.user_state == 1 or (st.session_state.user_state == 2 and st.session_state.total_pack < 2):
-        con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
+        con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
         cur = con.cursor()
         cur.execute("select mlc.id, mlc.paquete, m.municipio, mlc.vereda, mlc.area area_ha, mlc.cant_predios predios, mlc.enlace_a, mlc.observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id where mlc.mlc_estado = 1")
         data = cur.fetchall()
@@ -414,7 +404,7 @@ def asignar_gpkg(user_name):
         for elt in cur.description:
             cols.append(elt[0])
         query_4 = pd.DataFrame(data=data,columns=cols)
-        #query_4 = pd.read_sql('select mlc.id, mlc.paquete paquete, m.municipio Municipio, mlc.vereda vereda, mlc.area Área, mlc.cant_predios predios, mlc.enlace_a, mlc.observacion Observación from mlc join d_municipio m on mlc.mlc_municipio = m.id where mlc.mlc_estado = 1', con_uri)
+        #query_4 = pd.read_sql('select mlc.id, mlc.paquete paquete, m.municipio Municipio, mlc.vereda vereda, mlc.area Área, mlc.cant_predios predios, mlc.enlace_a, mlc.observacion Observación from mlc join d_municipio m on mlc.mlc_municipio = m.id where mlc.mlc_estado = 1', st.secrets.con_uri)
 
         if query_4.empty:
             st.info('No hay más datos para trabajar. En espera de nuevas entregas.')
@@ -466,7 +456,7 @@ def finalizar_gpkg(user_name):
     if st.session_state.user_state == 1:
         st.info('Actualmente no tienes paquetes asignados.')
     else:
-        con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
+        con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
         cur = con.cursor()
         cur.execute(f"select mlc.id, mlc.paquete, mlc.mlc_municipio, m.municipio, mlc.vereda, mlc.area area_ha, mlc.cant_predios predios, u.usuario from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc.mlc_municipio = m.id where u.usuario = '{user_name}' and mlc.mlc_estado = 2")
         data = cur.fetchall()
@@ -474,7 +464,7 @@ def finalizar_gpkg(user_name):
         for elt in cur.description:
             cols.append(elt[0])
         query_5 = pd.DataFrame(data=data,columns=cols)
-        #query_5 = pd.read_sql(f'select mlc.id, mlc.paquete paquete, mlc.mlc_municipio, m.municipio Municipio, mlc.vereda vereda, mlc.area area_ha, mlc.cant_predios predios, u.usuario Usuario from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc.mlc_municipio = m.id where u.usuario = "{user_name}" and mlc.mlc_estado = 2', con_uri)
+        #query_5 = pd.read_sql(f'select mlc.id, mlc.paquete paquete, mlc.mlc_municipio, m.municipio Municipio, mlc.vereda vereda, mlc.area area_ha, mlc.cant_predios predios, u.usuario Usuario from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc.mlc_municipio = m.id where u.usuario = "{user_name}" and mlc.mlc_estado = 2', st.secrets.con_uri)
 
         col1, col2 = st.columns(2)
 
@@ -620,12 +610,12 @@ def finalizar_gpkg(user_name):
 def consultas():
     radio = st.radio('', ('Control de calidad', 'Levantamiento catastral'))
     if radio == 'Control de calidad':
-        query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id', con_uri)
+        query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id', st.secrets.con_uri)
         st.write(query_6_1)
         csv = query_6_1.to_csv(index = False).encode('utf-8')
         st.download_button(label="CSV", data=csv, file_name='consulta_cc.csv', mime='text/csv')
     else:
-        query_6_2 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id', con_uri)
+        query_6_2 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id', st.secrets.con_uri)
         st.write(query_6_2)
         csv = query_6_2.to_csv(index = False).encode('utf-8')
         st.download_button(label="CSV", data=csv, file_name='consulta_mlc.csv', mime='text/csv')
@@ -639,6 +629,7 @@ def cargar_info():
     btn_upload = st.button('Cargar información')
     if btn_upload:
         if file_1 is not None:
+            engine = sqlalchemy.create_engine(st.secrets.con_uri)
             con_b = engine.connect()
             df.to_sql('mlc', con_b, if_exists='append', index=False)
             con_b.close()
@@ -658,7 +649,7 @@ def base_datos():
 
             if st.button('Ejecutar'):
                 try:
-                    query_7 = pd.read_sql(f'{txt_5}', con_uri)
+                    query_7 = pd.read_sql(f'{txt_5}', st.secrets.con_uri)
                     st.download_button('CSV', data = query_7.to_csv().encode('utf-8'), file_name = 'consulta.csv', mime = 'text/csv')
                 except:
                     st.error('Consulta mal ejecutada.')
@@ -668,7 +659,7 @@ def base_datos():
 
             if st.button('Ejecutar'):
                 try:
-                    con = psycopg2.connect(dbname=con_dbname, user=con_user, password=con_pass, host=con_host)
+                    con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
                     cur = con.cursor()
                     cur.execute(f'{txt_5}')
                     con.commit()
