@@ -398,7 +398,7 @@ def asignar_gpkg(user_name):
     if st.session_state.user_state == 1 or (st.session_state.user_state == 2 and st.session_state.total_pack < 2):
         con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
         cur = con.cursor()
-        cur.execute("select mlc.id, mlc.paquete, m.municipio, mlc.vereda, mlc.area area_ha, mlc.cant_predios predios, mlc.enlace_a, mlc.observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id where mlc.mlc_estado = 1")
+        cur.execute("select mlc.id, mlc.paquete, m.municipio, mlc.vereda, mlc.area area_ha, mlc.cant_predios predios, mlc.enlace_a, mlc.observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id where mlc.mlc_estado = 1 order by id")
         data = cur.fetchall()
         cols = []
         for elt in cur.description:
@@ -415,7 +415,7 @@ def asignar_gpkg(user_name):
             btn_asign = st.button('Asignar')
 
             if btn_asign:
-                cur.execute("select mlc.id, mlc.enlace_a from mlc where mlc.mlc_estado = 1")
+                cur.execute("select mlc.id, mlc.enlace_a from mlc where mlc.mlc_estado = 1 order by id")
                 data = cur.fetchall()
                 cols = []
                 for elt in cur.description:
@@ -610,12 +610,12 @@ def finalizar_gpkg(user_name):
 def consultas():
     radio = st.radio('', ('Control de calidad', 'Levantamiento catastral'))
     if radio == 'Control de calidad':
-        query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id', st.secrets.con_uri)
+        query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id order by estado, municipio, paquete', st.secrets.con_uri)
         st.write(query_6_1)
         csv = query_6_1.to_csv(index = False).encode('utf-8')
         st.download_button(label="CSV", data=csv, file_name='consulta_cc.csv', mime='text/csv')
     else:
-        query_6_2 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id', st.secrets.con_uri)
+        query_6_2 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id order by estado, municipio, paquete', st.secrets.con_uri)
         st.write(query_6_2)
         csv = query_6_2.to_csv(index = False).encode('utf-8')
         st.download_button(label="CSV", data=csv, file_name='consulta_mlc.csv', mime='text/csv')
