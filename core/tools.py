@@ -78,7 +78,7 @@ def asignar_cc(user_name):
 
         con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
         cur = con.cursor()
-        cur.execute("select cc.id, cc.paquete, m.municipio, cc.vereda, cc.area, cc.cant_predios predios, cc.enlace, cc.observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1")
+        cur.execute("select cc.id, cc.paquete, m.municipio, cc.vereda, cc.area, cc.cant_predios predios, cc.enlace, cc.observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id where cc.cc_estado = 1 order by id")
         data = cur.fetchall()
         cols = []
         for elt in cur.description:
@@ -97,7 +97,7 @@ def asignar_cc(user_name):
             if btn_asign:
                 con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
                 cur = con.cursor()
-                cur.execute("select cc.id, cc.enlace from control_calidad cc where cc.cc_estado = 1")
+                cur.execute("select cc.id, cc.enlace from control_calidad cc where cc.cc_estado = 1 order by id")
                 data = cur.fetchall()
                 cols = []
                 for elt in cur.description:
@@ -314,7 +314,7 @@ def finalizar_cc(user_name):
                         else:
                             cur.execute(f"UPDATE usuarios SET usuario_estado = 1, total_asig = total_asig-1 WHERE id = {user_id}")
 
-                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {query_3_1_pre}, {query_3_1_area}, 1, '{txt_1}')")
+                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {query_3_1_pre}, {query_3_1_area}, 1, '{txt_1}', '{now}')")
                         con.commit()
 
                         total_pack = asigs(user_name)
@@ -331,7 +331,7 @@ def finalizar_cc(user_name):
                         else:
                             cur.execute(f"UPDATE usuarios SET usuario_estado = 1, total_asig = total_asig-1 WHERE id = {user_id}")
 
-                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {query_3_1_pre}, {quest_1_area}, 1, '{txt_1}')")
+                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {query_3_1_pre}, {quest_1_area}, 1, '{txt_1}', '{now}')")
                         con.commit()
 
                         total_pack = asigs(user_name)
@@ -348,7 +348,7 @@ def finalizar_cc(user_name):
                         else:
                             cur.execute(f"UPDATE usuarios SET usuario_estado = 1, total_asig = total_asig-1 WHERE id = {user_id}")
 
-                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {quest_2_predios}, {query_3_1_area}, 1, '{txt_1}')")
+                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {quest_2_predios}, {query_3_1_area}, 1, '{txt_1}', '{now}')")
                         con.commit()
 
                         total_pack = asigs(user_name)
@@ -365,7 +365,7 @@ def finalizar_cc(user_name):
                         else:
                             cur.execute(f"UPDATE usuarios SET usuario_estado = 1, total_asig = total_asig-1 WHERE id = {user_id}")
 
-                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {quest_2_predios}, {quest_1_area}, 1, '{txt_1}')")
+                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {quest_2_predios}, {quest_1_area}, 1, '{txt_1}', '{now}')")
                         con.commit()
 
                         total_pack = asigs(user_name)
@@ -610,12 +610,12 @@ def finalizar_gpkg(user_name):
 def consultas():
     radio = st.radio('', ('Control de calidad', 'Levantamiento catastral'))
     if radio == 'Control de calidad':
-        query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id', st.secrets.con_uri)
+        query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id', st.secrets.con_uri)
         st.write(query_6_1)
         csv = query_6_1.to_csv(index = False).encode('utf-8')
         st.download_button(label="CSV", data=csv, file_name='consulta_cc.csv', mime='text/csv')
     else:
-        query_6_2 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id', st.secrets.con_uri)
+        query_6_2 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id', st.secrets.con_uri)
         st.write(query_6_2)
         csv = query_6_2.to_csv(index = False).encode('utf-8')
         st.download_button(label="CSV", data=csv, file_name='consulta_mlc.csv', mime='text/csv')
