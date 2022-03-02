@@ -51,3 +51,5 @@ def opciones(user_name):
             tools.cargar_info()
         elif opcion == ops[7]:
             tools.base_datos()
+    elif rol_id == 5:
+        tools.consultas()

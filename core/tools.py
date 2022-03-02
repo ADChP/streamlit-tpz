@@ -314,7 +314,7 @@ def finalizar_cc(user_name):
                         else:
                             cur.execute(f"UPDATE usuarios SET usuario_estado = 1, total_asig = total_asig-1 WHERE id = {user_id}")
 
-                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {query_3_1_pre}, {query_3_1_area}, 1, '{txt_1}', '{now}')")
+                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso, cc_id) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {query_3_1_pre}, {query_3_1_area}, 1, '{txt_1}', '{now}', {query_3_2_id})")
                         con.commit()
 
                         total_pack = asigs(user_name)
@@ -331,7 +331,7 @@ def finalizar_cc(user_name):
                         else:
                             cur.execute(f"UPDATE usuarios SET usuario_estado = 1, total_asig = total_asig-1 WHERE id = {user_id}")
 
-                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {query_3_1_pre}, {quest_1_area}, 1, '{txt_1}', '{now}')")
+                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso, cc_id) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {query_3_1_pre}, {quest_1_area}, 1, '{txt_1}', '{now}', {query_3_2_id})")
                         con.commit()
 
                         total_pack = asigs(user_name)
@@ -348,7 +348,7 @@ def finalizar_cc(user_name):
                         else:
                             cur.execute(f"UPDATE usuarios SET usuario_estado = 1, total_asig = total_asig-1 WHERE id = {user_id}")
 
-                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {quest_2_predios}, {query_3_1_area}, 1, '{txt_1}', '{now}')")
+                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso, cc_id) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {quest_2_predios}, {query_3_1_area}, 1, '{txt_1}', '{now}', {query_3_2_id})")
                         con.commit()
 
                         total_pack = asigs(user_name)
@@ -365,7 +365,7 @@ def finalizar_cc(user_name):
                         else:
                             cur.execute(f"UPDATE usuarios SET usuario_estado = 1, total_asig = total_asig-1 WHERE id = {user_id}")
 
-                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {quest_2_predios}, {quest_1_area}, 1, '{txt_1}', '{now}')")
+                        cur.execute(f"INSERT INTO mlc (paquete, mlc_municipio, vereda, cant_predios, area, mlc_estado, enlace_a, ingreso, cc_id) VALUES ({query_3_1_paq}, '{query_3_2_mun}', '{query_3_1_ver}', {quest_2_predios}, {quest_1_area}, 1, '{txt_1}', '{now}', {query_3_2_id})")
                         con.commit()
 
                         total_pack = asigs(user_name)
@@ -379,6 +379,7 @@ def finalizar_cc(user_name):
                     else:
                         cur = con.cursor()
                         cur.execute(f"UPDATE control_calidad SET observacion = '{txt_2}' WHERE id = {query_3_2_id}")
+                        cur.execute(f"UPDATE mlc SET observacion = '{txt_2}' WHERE cc_id = {query_3_2_id}")
                         con.commit()
                         con.close()
                         st.success('Asignación finalizada.')
@@ -608,8 +609,8 @@ def finalizar_gpkg(user_name):
                         st.success('Asignación finalizada.')
 
 def consultas():
-    radio = st.radio('', ('Control de calidad', 'Levantamiento catastral'))
-    if radio == 'Control de calidad':
+    radio = st.radio('', ('Validación', 'Procesamiento con modelos'))
+    if radio == 'Validación':
         query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id order by municipio, estado, paquete', st.secrets.con_uri)
         st.write(query_6_1)
         csv = query_6_1.to_csv(index = False).encode('utf-8')
