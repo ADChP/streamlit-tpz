@@ -609,14 +609,26 @@ def finalizar_gpkg(user_name):
                         st.success('Asignación finalizada.')
 
 def consultas():
-    radio = st.radio('', ('Validación', 'Procesamiento con modelos'))
+    col1, col2 = st.columns(2)
+
+    with col1:
+        radio = st.radio('', ('Validación', 'Procesamiento con modelos'))
+    with col2:
+        muni = st.selectbox('Municipio', ('Todos', 'Beteitiva', 'Busbanza', 'Corrales','Paz del Rio', 'Sativasur', 'Socha', 'Socota', 'Tasco'))
+
     if radio == 'Validación':
-        query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id order by municipio, estado, paquete', st.secrets.con_uri)
+        if muni == 'Todos':
+            query_6_1 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id order by municipio, estado, paquete', st.secrets.con_uri)
+        else:
+            query_6_1 = pd.read_sql(f"select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace, observacion from control_calidad cc join d_municipio m on cc.cc_municipio = m.id join d_estadoentrega ee on cc.cc_estado = ee.id left join usuarios u on cc.cc_usuario = u.id where municipio = '{muni}' order by municipio, estado, paquete", st.secrets.con_uri)
         st.write(query_6_1)
         csv = query_6_1.to_csv(index = False).encode('utf-8')
         st.download_button(label="CSV", data=csv, file_name='consulta_cc.csv', mime='text/csv')
     else:
-        query_6_2 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id order by municipio, estado, paquete', st.secrets.con_uri)
+        if muni == 'Todos':
+            query_6_2 = pd.read_sql('select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id order by municipio, estado, paquete', st.secrets.con_uri)
+        else:
+            query_6_2 = pd.read_sql(f"select paquete, municipio, vereda, cant_predios, area, estado, usuario, ingreso, inicio, final, enlace_a, enlace_b, observacion from mlc join d_municipio m on mlc.mlc_municipio = m.id join d_estadoentrega ee on mlc.mlc_estado = ee.id left join usuarios u on mlc.mlc_usuario = u.id where municipio = '{muni}' order by municipio, estado, paquete", st.secrets.con_uri)
         st.write(query_6_2)
         csv = query_6_2.to_csv(index = False).encode('utf-8')
         st.download_button(label="CSV", data=csv, file_name='consulta_mlc.csv', mime='text/csv')
