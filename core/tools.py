@@ -6,7 +6,10 @@ from datetime import datetime
 
 @st.cache
 def password_db(user_name):
-    pass_db = pd.read_sql(f"select contrasena from usuarios where usuario = '{user_name}'", st.secrets.con_uri)
+    engine = sqlalchemy.create_engine(st.secrets.con_uri)
+    con = engine.connect()
+    pass_db = pd.read_sql(f"select contrasena from usuarios where usuario = '{user_name}'", con)
+    con.close()
     return pass_db
 
 @st.cache
