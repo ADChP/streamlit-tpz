@@ -614,7 +614,7 @@ def consultas():
     with col1:
         radio = st.radio('', ('Validación', 'Procesamiento con modelos'))
     with col2:
-        muni = st.selectbox('Municipio', ('Todos', 'Beteitiva', 'Busbanza', 'Corrales','Paz del Rio', 'Sativasur', 'Socha', 'Socota', 'Tasco'))
+        muni = st.selectbox('Municipio', ('Todos', 'Beteitiva', 'Busbanza', 'Corrales','Paz de Rio', 'Sativasur', 'Socha', 'Socota', 'Tasco'))
 
     if radio == 'Validación':
         if muni == 'Todos':
