@@ -38,7 +38,7 @@ def resumen(rol_id, user_name):
         if rol_id == 1:
             con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
             cur = con.cursor()
-            cur.execute(f"select cc.paquete paquete, m.municipio Municipio, cc.vereda vereda, cc.enlace Enlace, cc.observacion Observación from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = '{user_name}' and cc.cc_estado = 2")
+            cur.execute(f"select cc.paquete paquete, m.municipio Municipio, cc.vereda vereda, cc.enlace Enlace, cc.observacion Observación, cc.nombre_paquete from control_calidad cc join usuarios u on cc.cc_usuario = u.id join d_municipio m on cc.cc_municipio = m.id where u.usuario = '{user_name}' and cc.cc_estado = 2")
             data = cur.fetchall()
             cols = []
             for elt in cur.description:
@@ -51,7 +51,7 @@ def resumen(rol_id, user_name):
         else:
             con = psycopg2.connect(dbname=st.secrets.con_dbname, user=st.secrets.con_user, password=st.secrets.con_pass, host=st.secrets.con_host)
             cur = con.cursor()
-            cur.execute(f"select mlc.paquete paquete, m.municipio Municipio, mlc.vereda vereda, mlc.enlace_a Enlace, mlc.observacion Observación from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc_municipio = m.id where u.usuario = '{user_name}' and mlc.mlc_estado = 2")
+            cur.execute(f"select mlc.paquete paquete, m.municipio Municipio, mlc.vereda vereda, mlc.enlace_a Enlace, mlc.observacion Observación, cc.nombre_paquete from mlc join usuarios u on mlc.mlc_usuario = u.id join d_municipio m on mlc_municipio = m.id join control_calidad cc on mlc.cc_id = cc.id where u.usuario = '{user_name}' and mlc.mlc_estado = 2")
             data = cur.fetchall()
             cols = []
             for elt in cur.description:
