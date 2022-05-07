@@ -155,7 +155,7 @@ def finalizar_cc(user_name):
             quest_1 = st.radio('¿Coincide el área reportada con el área trabajada?', ('Sí', 'No'))
 
             if quest_1 == 'No':
-                quest_1_area = st.number_input('Área (HA)', min_value = 1.0)
+                quest_1_area = st.number_input('Área (HA)', min_value = 0.01)
 
             quest_2 = st.radio('¿Coincide el número de predios reportados con el número de predios trabajados?', ('Sí', 'No'))
 
@@ -473,7 +473,7 @@ def finalizar_gpkg(user_name):
             quest_3 = st.radio('¿Coincide el área reportada con el área trabajada?', ('Sí', 'No'))
 
             if quest_3 == 'No':
-                quest_3_area = st.number_input('Área (HA)', min_value = 1.0)
+                quest_3_area = st.number_input('Área (HA)', min_value = 0.01)
 
             quest_4 = st.radio('¿Coincide el número de predios reportados con el número de predios trabajados?', ('Sí', 'No'))
 
